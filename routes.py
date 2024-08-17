@@ -19,3 +19,10 @@ def register_routes(app,db):
 
                orang = Orang.query.all()
                return render_template('index.html',people=orang)
+
+     @app.route('/delete/<ID>',methods=['DELETE'])
+     def delete(ID):
+          Orang.query.filter(Orang.ID == ID).delete()
+          db.session.commit()
+          orang = Orang.query.all()
+          return render_template('index.html',people=orang)

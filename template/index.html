@@ -4,7 +4,7 @@
 <h1>Index Page</h1>
      <ul>
           {% for person in people %}
-               <li>{{person}}</li>
+          <li>{{ person }}<button onclick="deletePerson({{ person.nID }})">Delete</button></li>
           {% endfor %}
      </ul>
 
@@ -15,4 +15,22 @@
           <input type="text" name="pekerjaan" placeholder="Pekerjaan"><br>
           <input type="submit" value="Add">
      </form>
+
+     <script type="text/javascript">
+          function deletePerson(ID) {
+              fetch('{{ url_for("delete",ID=ID) }}' + ID, {
+                  method: 'DELETE'
+              }).then(response => {
+                  if (response.ok) {
+                      window.location.reload();
+                  } else {
+                      console.error('Gagal menghapus item dengan PID', ID);
+                  }
+              }).catch(error => {
+                  console.error('Error saat menghapus', error);
+              });
+          }
+     </script>
+
 {% endblock %}
+

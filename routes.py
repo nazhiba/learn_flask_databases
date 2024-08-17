@@ -26,3 +26,9 @@ def register_routes(app,db):
           db.session.commit()
           orang = Orang.query.all()
           return render_template('index.html',people=orang)
+
+     @app.route('/detail/<pid>')
+     def detail(pid):
+          orang = Orang.query.filter(Orang.ID == pid).first()
+          return render_template('details.html',person=orang)
+          

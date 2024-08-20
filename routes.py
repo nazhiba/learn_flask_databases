@@ -1,34 +1,52 @@
 from flask import render_template, request
-from models import Orang
+# from models import Orang
+from models import User
+from flask_login import login_user, logout_user, current_user, login_required
 
-def register_routes(app,db):
+def register_routes(app,db,bcrypt):
      @app.route('/',methods=['GET','POST'])
      def index():
-          if request.method == 'GET':
-               orang = Orang.query.all()
-               return render_template('index.html',people=orang)
-          elif request.method == 'POST':
-               nama = request.form.get('nama')
-               umur = int(request.form.get('umur'))
-               pekerjaan = request.form.get('pekerjaan')
+          if  current_user.is_authenticated:
+               return str(current_user.Username)
+          else:
+               return 'No users logged in'
 
-               person = Orang(Nama=nama,Umur=umur,Pekerjaan=pekerjaan)
+     @app.route('/login/<id>')
+     def login(id):
+          user = User.query.get(id)
+          login_user(user)
+          return 'SUKSUES'
 
-               db.session.add(person)
-               db.session.commit()
+     @app.route('/logout')
+     def logout():
+          logout_user()
+          return 'SUKSUES'
 
-               orang = Orang.query.all()
-               return render_template('index.html',people=orang)
+     #      if request.method == 'GET':
+     #           orang = Orang.query.all()
+     #           return render_template('index.html',people=orang)
+     #      elif request.method == 'POST':
+     #           nama = request.form.get('nama')
+     #           umur = int(request.form.get('umur'))
+     #           pekerjaan = request.form.get('pekerjaan')
 
-     @app.route('/delete/<ID>',methods=['DELETE'])
-     def delete(ID):
-          Orang.query.filter(Orang.ID == ID).delete()
-          db.session.commit()
-          orang = Orang.query.all()
-          return render_template('index.html',people=orang)
+     #           person = Orang(Nama=nama,Umur=umur,Pekerjaan=pekerjaan)
 
-     @app.route('/detail/<pid>')
-     def detail(pid):
-          orang = Orang.query.filter(Orang.ID == pid).first()
-          return render_template('details.html',person=orang)
+     #           db.session.add(person)
+     #           db.session.commit()
+
+     #           orang = Orang.query.all()
+     #           return render_template('index.html',people=orang)
+
+     # @app.route('/delete/<ID>',methods=['DELETE'])
+     # def delete(ID):
+     #      Orang.query.filter(Orang.ID == ID).delete()
+     #      db.session.commit()
+     #      orang = Orang.query.all()
+     #      return render_template('index.html',people=orang)
+
+     # @app.route('/detail/<pid>')
+     # def detail(pid):
+     #      orang = Orang.query.filter(Orang.ID == pid).first()
+     #      return render_template('details.html',person=orang)
           

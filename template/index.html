@@ -2,7 +2,9 @@
 {% block title %}Index{% endblock %}
 {% block content %}
 <h1>Index Page</h1>
-     <ul>
+
+
+     <!-- <ul>
           {% for person in people %}
           <li>{{ person }}<button onclick="deletePerson({{ person.ID }})">Delete</button><a href="{{ url_for('detail',pid=person.ID) }}">Detail</a></li>
           {% endfor %}
@@ -30,7 +32,7 @@
                   console.error('Error saat menghapus', error);
               });
           }
-     </script>
+     </script> -->
 
 {% endblock %}
 

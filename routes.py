@@ -1,27 +1,59 @@
-from flask import render_template, request
+from flask import render_template, request, redirect, url_for
 # from models import Orang
 from models import User
 from flask_login import login_user, logout_user, current_user, login_required
 
 def register_routes(app,db,bcrypt):
-     @app.route('/',methods=['GET','POST'])
+     
+     @app.route('/')
      def index():
-          if  current_user.is_authenticated:
-               return str(current_user.Username)
-          else:
-               return 'No users logged in'
+          return render_template('index.html')
 
-     @app.route('/login/<id>')
-     def login(id):
-          user = User.query.get(id)
-          login_user(user)
-          return 'SUKSUES'
+     @app.route('/signup',methods=['GET','POST'])
+     def signup():
+          if request.method == 'GET':
+               return render_template('signup.html')
+          elif request.method == 'POST':
+               username = request.form.get('username')
+               password = request.form.get('password')
+               hashed_password = bcrypt.generate_password_hash(password)
+               user = User(Username=username, Password=hashed_password)
+               db.session.add(user)
+               db.session.commit()
+               return redirect(url_for('index'))
+
+     @app.route('/login',methods=['GET','POST'])
+     def login():
+          if request.method == 'GET':
+               return render_template('login.html')
+          elif request.method == 'POST':
+               username = request.form.get('username')
+               password = request.form.get('password')
+
+               user = User.query.filter(User.Username == username).first()
+               if bcrypt.check_password_hash(user.Password, password):
+                    login_user(user)
+                    return render_template('index.html')
+               else:
+                    return 'Failed!!'
+
 
      @app.route('/logout')
      def logout():
           logout_user()
-          return 'SUKSUES'
+          return redirect(url_for('index'))
 
+     @app.route('/secret')
+     @login_required
+     def secret():
+          return 'BTC-21091471213145010011'
+
+
+"""sumary_line
+
+Keyword arguments:
+argument -- description
+Return: return_description
      #      if request.method == 'GET':
      #           orang = Orang.query.all()
      #           return render_template('index.html',people=orang)
@@ -50,3 +82,4 @@ def register_routes(app,db,bcrypt):
      #      orang = Orang.query.filter(Orang.ID == pid).first()
      #      return render_template('details.html',person=orang)
           
+"""
